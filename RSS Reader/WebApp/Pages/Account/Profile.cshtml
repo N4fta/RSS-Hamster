@@ -1,0 +1,109 @@
+﻿@page
+@using System.Security.Claims;
+@model WebApp.Pages.ProfileModel
+@{
+    ViewData["Title"] = "Profile";
+}
+@section head{
+    <!-- Based on template from https://www.bootdey.com/snippets/view/update-my-profile -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css" integrity="sha256-2XFplPlrFClt0bIdPgpz8H7ojnk10H69xRqd9+uTShA=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="~/css/profile.css" asp-append-version="true" />
+}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <!-- Page title -->
+            <div class="my-5">
+                <h3>My Profile</h3>
+                <hr>
+            </div>
+            <!-- Form START -->
+            <form class="file-upload" method="post">
+                <div class="row mb-5 gx-5">
+                    <!-- Details -->
+                    <div class="col-xxl-8 mb-5 mb-xxl-0">
+                        <div class="bg-secondary-soft px-4 py-5 rounded">
+                            <div class="row g-3">
+                                <h4 class="mb-4 mt-0">Contact detail</h4>
+                                <!-- Name -->
+                                <div class="col-md-6">
+                                    <label asp-for="UpdateUser.Name" class="form-label">Name: </label>
+                                    <span asp-validation-for="UpdateUser.Name" style="color:red"></span>
+                                    <input asp-for="UpdateUser.Name" type="text" class="form-control" placeholder="" aria-label="First name" value="@User.FindFirst("Name").Value">
+                                </div>
+                                <!-- Username -->
+                                <div class="col-md-6">
+                                    <label asp-for="Username" class="form-label">Username: </label>
+                                    <span asp-validation-for="Username" style="color:red"></span>
+                                    <input asp-for="Username" type="text" class="form-control" placeholder="" aria-label="First name" value="@User.FindFirst("Username").Value">
+                                </div>
+                                <!-- Email -->
+                                <div class="col-md-6">
+                                    <label asp-for="Email" class="form-label">Email: </label>
+                                    <span asp-validation-for="Email" style="color:red"></span>
+                                    <input asp-for="Email" type="email" class="form-control" value="@User.FindFirst("Email").Value">
+                                </div>
+                                <!-- Role -->
+                                <div class="col-md-6">
+                                    <label class="form-label">Role: </label>
+                                    <input class="form-control" value="@User.FindFirst("Role").Value" disabled>
+                                </div>
+                            </div> <!-- Row END -->
+                        </div>
+                    </div>
+                    <div class="col-xxl-4">
+                        <div class="bg-secondary-soft px-4 py-5 rounded">
+                            <div class="row g-3">
+                                <h4 class="mb-4 mt-0">Upload your profile photo</h4>
+                                <div class="text-center">
+                                    <!-- Image upload -->
+                                    <div class="square position-relative display-2 mb-3">
+                                        <i class="fas fa-fw fa-user position-absolute top-50 start-50 translate-middle text-secondary"></i>
+                                    </div>
+                                    <!-- Button -->
+                                    <input type="file" id="customFile" name="file" hidden="">
+                                    <label class="btn btn-success-soft btn-block" for="customFile">Upload</label>
+                                    <button type="button" class="btn btn-danger-soft">Remove</button>
+                                    <!-- Content -->
+                                    <p class="text-muted mt-3 mb-0"><span class="me-1">Note:</span>Minimum size 300px x 300px</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- Row END -->
+                <!-- Change password -->
+                <div class="row mb-5 gx-5">
+                    <div class="col-xxl-6">
+                        <div class="bg-secondary-soft px-4 py-5 rounded">
+                            <div class="row g-3">
+                                <h4 class="my-4">Change Password</h4>
+                                <!-- Old password -->
+                                <div class="col-md-6">
+                                    <label asp-for="UpdateUser.Password" class="form-label">Old password *</label>
+                                    <span asp-validation-for="UpdateUser.Password" style="color:red"></span>
+                                    <input type="password" class="form-control" asp-for="UpdateUser.Password">
+                                </div>
+                                <!-- New password -->
+                                <div class="col-md-6">
+                                    <label asp-for="UpdateUser.NewPassword" class="form-label">New password *</label>
+                                    <span asp-validation-for="UpdateUser.NewPassword" style="color:red"></span>
+                                    <input type="password" class="form-control" asp-for="UpdateUser.NewPassword">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- button -->
+                <div class="gap-3 d-md-flex justify-content-md-end text-center">
+                    <button asp-page-handler="delete" type="submit" class="btn btn-danger btn-lg">Delete profile</button>
+                    <button asp-page-handler="update" type="submit" class="btn btn-primary btn-lg">Update profile</button>
+                </div>
+            </form> <!-- Form END -->
+        </div>
+    </div>
+</div>
+
+@section scripts {
+
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,138 @@
+﻿@page
+@using Domain
+@model WebApp.Pages.FeedDetailsModel
+@{
+    ViewData["Title"] = $"{Model.parsedFeed.Title}";// Feed Name
+}
+@* Feed Header Data*@
+<div class="feed-details-header">
+    <div>
+        <h1 class="display-5">@Model.parsedFeed.Title</h1>
+        <time class="lead">- @Model.parsedFeed.LastUpdated.ToString("dddd dd, MMM yyyy")</time>
+        <br />
+        <h3 class="lead">Categories: @String.Join(", ", Model.feed.Categories)</h3>
+        <br />
+        @if (User.Identity.IsAuthenticated == true)
+        {
+            <form method="post">
+                <input name="feedId" type="hidden" value="@Model.feed.Id" />
+                @if (Model.LikedFeed)
+                {
+                    <button asp-page-handler="unlikeFeed" type="submit" class="btn btn-primary btn-lg" value="">Liked</button>
+                }
+                else
+                {
+                    <button asp-page-handler="likeFeed" type="submit" class="btn btn-primary btn-lg">Like</button>
+                }
+            </form>
+            <br />
+        }
+    </div>
+    <div class="feed-details-logo">
+        @{
+            string logoSource;
+            if (Model.feed.Source.Contains("https://")) logoSource = $"https://logo.clearbit.com/{Model.feed.Source.Split("https://")[1].Split("/")[0]}?format=png&size=300";
+            else logoSource = $"https://logo.clearbit.com/{Model.feed.Source.Split("/")[0]}?format=png&size=300";
+        }
+        <img src=@logoSource class="d-block w-100 card-img" />
+    </div>
+</div>
+
+
+@* Feed Items *@
+<div class="m-5">
+    <h3 class="h3">Feed Items</h3>
+    @foreach (ParsedFeedItem parsedFeedItem in @Model.parsedFeed.Items)
+    {
+        <div class="feed-details-item">
+            <h4 class="h4"><a href="@parsedFeedItem.Link" class="no-link">@parsedFeedItem.Title</a></h4>
+            @if (!String.IsNullOrWhiteSpace(parsedFeedItem.Author))
+            {
+                <h6 class="h6">by @parsedFeedItem.Author</h6>
+            }
+            @if (parsedFeedItem.Published.HasValue)
+            {
+                <h6 class="h6">- @parsedFeedItem.Published.Value.ToString("dd-MM-yyyy")</h6>
+            }
+            <div>
+                <p>
+                    @Html.Raw(parsedFeedItem.MainBody)
+                </p>
+                @if (parsedFeedItem.Media != null)
+                {
+                    @Html.Raw(parsedFeedItem.Media)
+                }
+            </div>
+        </div>
+        <br />
+    }
+</div>
+
+@* Reviews *@
+<div class="m-4">
+    <h5 class="h5">Reviews</h5>
+    @if (User.Identity.IsAuthenticated == true)
+    {
+        <div class="accordion">
+            <div class="accordion-item bg-dark">
+                <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button " type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        Create
+                    </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <form method="post">
+                            <input name="feedId" type="hidden" value="@Model.feed.Id" />
+                            @* Review Form *@
+                            <label asp-for="CreateReview.Title">Title: </label>
+                            <span asp-validation-for="CreateReview.Title" style="color:red"></span>
+                            <br />
+                            <input asp-for="CreateReview.Title" />
+                            <br />
+
+                            <label asp-for="CreateReview.MainBody">Review: </label>
+                            <span asp-validation-for="CreateReview.MainBody" style="color:red"></span>
+                            <br />
+                            <input asp-for="CreateReview.MainBody"/>
+                            <br />
+                            <br />
+
+                            <button asp-page-handler="createReview" type="submit" class="btn btn-primary" value="">Create</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    @foreach (Review review in @Model.feed.Reviews)
+    {
+        <div class="feed-details-item m-4">
+            <h3 class="h5">@review.Title</h3>
+            <h3 class="h6">Likes: @review.Likes</h3>
+            <div class="m-3">
+                <p>
+                    @review.MainBody
+                </p>
+            </div>
+            @if (User.Identity.IsAuthenticated == true)
+            {
+
+                <form method="post">
+                    <input name="feedId" type="hidden" value="@Model.feed.Id" />
+                    <input name="reviewId" type="hidden" value="@review.Id" />
+                    @if (Model.likedReviews.Find(r => r.Title == review.Title) != null)
+                    {
+                        <button asp-page-handler="unlikeReview" type="submit" class="btn btn-primary" value="">Liked</button>
+                    }
+                    else
+                    {
+                        <button asp-page-handler="likeReview" type="submit" class="btn btn-primary">Like</button>
+                    }
+                </form>
+                <br />
+            }
+        </div>
+    }
+</div>
+

@@ -1,0 +1,104 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/WebApp.styles.css" asp-append-version="true" />
+    @RenderSection("head", false)
+
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top bg-dark">
+
+        <div class="container-fluid">
+            <!-- Logo -->
+            <a class="navbar-brand text-light" asp-area="" asp-page="/Index">
+                <img src="~/img/hamster-logo.png" class="img-fluid img-logo" alt="">
+                RSS Hamster
+            </a>
+
+            <!-- Collapse Button -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Nav Items -->
+            <div class="collapse navbar-collapse sticky-top" id="collapsibleNavbar">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-page="/Index">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-page="/AllFeeds">All Feeds</a>
+                    </li>
+                    @if (User.Identity.IsAuthenticated == true)
+                    {
+                        <li class="nav-item">
+                            <form class="d-flex" method="post" asp-page="/AllFeeds" asp-page-handler="MyList">
+                                <button class="nav-link fake-link" type="submit">My List</button>
+                            </form>
+
+                        </li>
+                    }
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-page="/About">About</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav me-1">
+                    @if (User.Identity.IsAuthenticated == false)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-page="/Account/Login">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-page="/Account/Register">Register</a>
+                        </li>
+                    }
+                    @if (User.Identity.IsAuthenticated == true)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-page="/Account/Profile">Profile</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-page="/Account/Logout">Logout</a>
+                        </li>
+                    }
+                </ul>
+                <form class="d-flex" method="post" asp-page="/AllFeeds">
+                    <input class="form-control me-2" name="searchBox" type="text">
+                    <button class="btn btn-primary" type="submit">Search</button>
+                </form>
+            </div>
+
+        </div>
+
+    </nav>
+
+    <!-- Content -->
+    <!-- Add Height relative only Padding -->
+    <main role="main" class="d-flex  justify-content-center">
+        <div class="main-div px-4 py-4 my-5 bg-dark">
+
+            @RenderBody()
+
+        </div>
+    </main>
+
+    <footer class="border-top footer text-muted bg-dark">
+        <div class="container text-center">
+            &copy; 2024 - RSS Hamster by Nuno Dias - A <a class="link-secondary" style="color:#6c757d" href="https://www.fontys.nl/en/Home.htm" target="_blank" rel="noopener noreferrer">Fontys Hogeschool</a> ICT Project - <a class="link-secondary" style="color:#6c757d" href="https://git.fhict.nl/I540432/rss-feed-viewer" target="_blank" rel="noopener noreferrer">GitLab Repository</a> - <a class="link-secondary" asp-area="" asp-page="/About">About</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,414 @@
+﻿@page
+@model IndexModel
+@using Domain
+@{
+    ViewData["Title"] = "Home page";
+}
+@functions {
+    // Generates the Feed Cards based on a list of Feeds
+    async Task<bool> CarouselFeedCards(List<Domain.Feed> feedList)
+    {
+        foreach (var feed in feedList)
+        {
+            ParsedFeed parsedFeed = await feed.ParseFeedAsync();
+            // Free API call that fetches the logo of a company based on the links domain
+            string logoSource;
+            if (feed.Source.Contains("https://")) logoSource = $"https://logo.clearbit.com/{feed.Source.Split("https://")[1].Split("/")[0]}?format=png&size=300";
+            else logoSource = $"https://logo.clearbit.com/{feed.Source.Split("/")[0]}?format=png&size=300";
+
+            <div class="carousel-item active">
+                <!-- Flex div centers image -->
+                <div class="d-flex justify-content-center">
+                    <div class="card d-block bg-dark">
+                        <img src=@logoSource class="d-block w-100 card-img" />
+                    </div>
+                </div>
+
+                <!-- Flex div centers caption -->
+                <div class="d-flex justify-content-center">
+                    <div class="carousel-caption">
+                        @{
+                            string title = "";
+                            if (parsedFeed.Title.Length > 37)
+                            {
+                                title = parsedFeed.Title.Substring(0, 34) + "...";
+                            }
+                            else title = parsedFeed.Title;
+                        }
+                        <h3 class="card-text"><a class="no-link" href="/FeedDetails?feedID=@feed.Id">@title</a></h3>
+                        <p class="card-text">@parsedFeed.LastUpdated.ToString("ddd d, MMMM yyyy")</p>
+                    </div>
+                </div>
+            </div>
+        }
+        return true;
+    }
+}
+
+<div class="text-center">
+    <h1 class="display-3">Welcome</h1>
+    <p></p>
+</div>
+
+<!-- Carousel Popular -->
+<div class="p-3">
+
+    <h2 class="display-6">Popular</h2>
+
+    <div id="carousel-popular" class="carousel p-2">
+
+        @if (Model.MostPopularException == string.Empty)
+        {
+            <!-- Slides -->
+            <div class="carousel-inner">
+                @{
+                    await CarouselFeedCards(Model.MostPopular);
+                }
+            </div>
+
+            <!-- Left and right controls/icons -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#carousel-popular" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carousel-popular" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+            @*
+        With a lot of help from W3 Schools https://www.w3schools.com/bootstrap5/bootstrap_carousel.php
+
+        To possibly add: Replace Slides by cards so you can have multiple shown at once
+        https://codingyaar.com/bootstrap-carousel-multiple-items-increment-by-1/
+        *@
+        }
+        else
+        {
+            <p>Error: @Model.MostPopularException</p>
+        }
+    </div>
+</div>
+
+
+
+<!-- Carousel New Additions-->
+<div class="p-3">
+
+    <h2 class="display-6">New Additions</h2>
+
+    <div id="carousel-new-additions" class="carousel p-2">
+
+        @if (Model.NewAdditionsException == string.Empty)
+        {
+            <!-- Slides -->
+            <div class="carousel-inner">
+                @{
+                    await CarouselFeedCards(Model.NewAdditions);
+                }
+            </div>
+
+            <!-- Left and right controls/icons -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#carousel-new-additions" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carousel-new-additions" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+
+        }
+        else
+        {
+            <p>Error: @Model.MostPopularException</p>
+        }
+    </div>
+</div>
+
+
+
+@if (User.Identity.IsAuthenticated == true)
+{
+    <!-- Carousel MyList -->
+    <div class="p-3">
+
+        <h2 class="display-6">My List</h2>
+
+        <div id="carousel-mylist" class="carousel p-2">
+
+            @if (Model.MyListException == string.Empty)
+            {
+                <!-- Slides -->
+                <div class="carousel-inner">
+                    @{
+                        await CarouselFeedCards(Model.MyList);
+                    }
+                </div>
+
+                <!-- Left and right controls/icons -->
+                <button class="carousel-control-prev" type="button" data-bs-target="#carousel-mylist" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carousel-mylist" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+
+            }
+            else
+            {
+                <p>Error: @Model.MostPopularException</p>
+            }
+        </div>
+    </div>
+}
+
+@section scripts {
+
+    // <!-- Logo Processing, right now it only vectorifies the image -->
+    // <script>
+    //     var canvasList = document.getElementsByClassName("canvas");
+    //     var imageList = document.getElementsByClassName("removeBackground");
+    //     const apectRatio = 300;
+
+
+    //     for (var imageIndex = 0, totalImages = canvasList.length; imageIndex < totalImages; imageIndex += 1) {
+    //         var canvas = canvasList[imageIndex];
+    //         var image = imageList[imageIndex];
+    //         var ctx = canvas.getContext("2d");
+
+    //         canvas.height = canvas.width = apectRatio;
+    //         ctx.drawImage(image, 0, 0, apectRatio, apectRatio);
+
+    //     @*
+    //         https://jsfiddle.net/loktar/BtbSM/
+
+    //         // Removing Background
+    //         var imgd = ctx.getImageData(0, 0, apectRatio, apectRatio),
+    //         pix = imgd.data,
+    //         newColor = { r: 0, g: 0, b: 0, a: 0 };
+
+
+
+    //         for (var i = 0, n = pix.length; i < n; i += 4) {
+    //         var r = pix[i],
+    //         g = pix[i + 1],
+    //         b = pix[i + 2];
+
+
+    //         // Smoothing
+    //         var gap = 4;
+    //         var tolerance = 30;
+    //         var borderRight = true;
+    //         var borderLeft = true;
+    //         var borderTop = true;
+    //         var borderBottom = true;
+
+    //         if (i > 4 * gap) {
+    //         // Previous pixel
+    //         var pR = pix[i - 3 * gap],
+    //         pG = pix[i - 2 * gap],
+    //         pB = pix[i - 1 * gap];
+
+    //         // If difference is too high snap it to next
+    //         if (r + g + b > pR + pG + pB + tolerance || r + g + b < pR + pG + pB - tolerance) {
+    //         borderRight = false;
+    //         }
+    //         }
+
+
+    //         // If its white then change it
+    //         if (r >= 230 && g >= 230 && b >= 230) {
+    //         // Change the white to whatever.
+    //         pix[i] = newColor.r;
+    //         pix[i + 1] = newColor.g;
+    //         pix[i + 2] = newColor.b;
+    //         pix[i + 3] = newColor.a;
+    //         }
+
+    //         }
+    //         ctx.putImageData(imgd, 0, 0);
+    //         *@
+    //                                                                     }
+    // </script>
+
+
+    <!-- Snapping Cards on Resize -->
+    <script>
+        var currentPositionPopular = 0;
+        var currentPositionMyList = 0;
+        var currentPositionNewAddition = 0;
+        $(window).resize(function () {
+            // Save current Slides
+            var cardWidth = $(".carousel-item").width();
+            if (currentPositionPopular == 0) {
+                currentPositionPopular = Math.round(scrollPositionPopular / cardWidth);
+            };
+            if (currentPositionMyList == 0) {
+                currentPositionMyList = Math.round(scrollPositionMyList / cardWidth);
+            };
+            if (currentPositionNewAddition == 0) {
+                currentPositionNewAddition = Math.round(scrollPositionNewAdditions / cardWidth);
+            };
+
+            // Don't execute resize until 500 ms have passed without change
+            if (this.resizeTO) clearTimeout(this.resizeTO);
+            this.resizeTO = setTimeout(function () {
+                $(this).trigger('resizeEnd');
+            }, 500);
+        });
+
+        // Do something, window hasn't changed size in 500ms
+        $(window).bind('resizeEnd', function () {
+            var cardWidth = $(".carousel-item").width();
+
+            // Go to saved Slides
+            scrollPositionPopular = cardWidth * currentPositionPopular;
+            $("#carousel-popular .carousel-inner").animate(
+                { scrollLeft: scrollPositionPopular },
+                600
+            );
+
+            scrollPositionMyList = cardWidth * currentPositionMyList;
+            $("#carousel-mylist .carousel-inner").animate(
+                { scrollLeft: scrollPositionMyList },
+                600
+            );
+
+            scrollPositionNewAdditions = cardWidth * currentPositionNewAddition;
+            $("#carousel-new-additions .carousel-inner").animate(
+                { scrollLeft: scrollPositionNewAdditions },
+                600
+            );
+
+            // Reset Current Slides
+            currentPositionPopular = 0;
+            currentPositionMyList = 0;
+            currentPositionNewAddition = 0;
+        });
+    </script>
+
+
+    <!-- Popular -->
+    <script>
+
+        var multipleCardCarouselPopular = document.querySelector(
+            "#carousel-popular"
+        );
+        if (window.matchMedia("(min-width: 768px)").matches) {
+            var carouselPopular = new bootstrap.Carousel(multipleCardCarouselPopular, {
+                interval: false,
+            });
+            var carouselWidthPopular = $(".carousel-inner")[0].scrollWidth;
+            var cardWidth = $(".carousel-item").width();
+            var scrollPositionPopular = 0;
+
+            $("#carousel-popular .carousel-control-next").on("click", function () {
+                // Updating variables for when screen resized
+                carouselWidthPopular = $(".carousel-inner")[0].scrollWidth;
+                cardWidth = $(".carousel-item").width();
+                if (scrollPositionPopular < carouselWidthPopular - cardWidth * 4) {
+                    scrollPositionPopular += cardWidth;
+                    $("#carousel-popular .carousel-inner").animate(
+                        { scrollLeft: scrollPositionPopular },
+                        600
+                    );
+                }
+            });
+            $("#carousel-popular .carousel-control-prev").on("click", function () {
+                carouselWidthPopular = $(".carousel-inner")[0].scrollWidth;
+                cardWidth = $(".carousel-item").width();
+                if (scrollPositionPopular > 0) {
+                    scrollPositionPopular -= cardWidth;
+                    $("#carousel-popular .carousel-inner").animate(
+                        { scrollLeft: scrollPositionPopular },
+                        600
+                    );
+                }
+            });
+        } else {
+            $(multipleCardCarouselPopular).addClass("slide");
+        }
+    </script>
+
+    <!-- MyList -->
+    <script>
+        var multipleCardCarouselMyList = document.querySelector(
+            "#carousel-mylist"
+        );
+        if (window.matchMedia("(min-width: 768px)").matches) {
+            var carouselMyList = new bootstrap.Carousel(multipleCardCarouselMyList, {
+                interval: false,
+            });
+            var carouselWidthMyList = $(".carousel-inner")[0].scrollWidth;
+            var cardWidth = $(".carousel-item").width();
+            var scrollPositionMyList = 0;
+            $("#carousel-mylist .carousel-control-next").on("click", function () {
+                // Updating variables for when screen resized
+                carouselWidthMyList = $(".carousel-inner")[0].scrollWidth;
+                cardWidth = $(".carousel-item").width();
+                if (scrollPositionMyList < carouselWidthMyList - cardWidth * 4) {
+                    scrollPositionMyList += cardWidth;
+                    $("#carousel-mylist .carousel-inner").animate(
+                        { scrollLeft: scrollPositionMyList },
+                        600
+                    );
+                }
+            });
+            $("#carousel-mylist .carousel-control-prev").on("click", function () {
+                carouselWidthMyList = $(".carousel-inner")[0].scrollWidth;
+                cardWidth = $(".carousel-item").width();
+                if (scrollPositionMyList > 0) {
+                    scrollPositionMyList -= cardWidth;
+                    $("#carousel-mylist .carousel-inner").animate(
+                        { scrollLeft: scrollPositionMyList },
+                        600
+                    );
+                }
+            });
+        } else {
+            $(multipleCardCarouselMyList).addClass("slide");
+        }
+    </script>
+
+    <!-- New Additions -->
+    <script>
+        var multipleCardCarouselNewAdditions = document.querySelector(
+            "#carousel-new-additions"
+        );
+        if (window.matchMedia("(min-width: 768px)").matches) {
+            var carouselNewAdditions = new bootstrap.Carousel(multipleCardCarouselNewAdditions, {
+                interval: false,
+            });
+            var carouselWidthNewAdditions = $(".carousel-inner")[0].scrollWidth;
+            var cardWidth = $(".carousel-item").width();
+            var scrollPositionNewAdditions = 0;
+            $("#carousel-new-additions .carousel-control-next").on("click", function () {
+                // Updating variables for when screen resized
+                carouselWidthNewAdditions = $(".carousel-inner")[0].scrollWidth;
+                cardWidth = $(".carousel-item").width();
+                if (scrollPositionNewAdditions < carouselWidthNewAdditions - cardWidth * 4) {
+                    scrollPositionNewAdditions += cardWidth;
+                    $("#carousel-new-additions .carousel-inner").animate(
+                        { scrollLeft: scrollPositionNewAdditions },
+                        600
+                    );
+                }
+            });
+            $("#carousel-new-additions .carousel-control-prev").on("click", function () {
+                carouselWidthNewAdditions = $(".carousel-inner")[0].scrollWidth;
+                cardWidth = $(".carousel-item").width();
+                if (scrollPositionNewAdditions > 0) {
+                    scrollPositionNewAdditions -= cardWidth;
+                    $("#carousel-new-additions .carousel-inner").animate(
+                        { scrollLeft: scrollPositionNewAdditions },
+                        600
+                    );
+                }
+            });
+        } else {
+            $(multipleCardCarouselNewAdditions).addClass("slide");
+        }
+    </script>
+}

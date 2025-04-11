@@ -1,0 +1,108 @@
+﻿@page
+@using Domain
+@using Domain.Algorithms.Modules
+@model WebApp.Pages.AllFeedsModel
+@{
+    ViewData["Title"] = "All Feeds";
+}
+
+@* Top of Page Elements *@
+<h2 class="display-5">All Feeds</h2>
+
+@* Middle of Page Elements *@
+<div class="d-flex">
+
+    @if (Model.FeedList != null)
+    {
+        <div class="feed-grid">
+            @foreach (var feed in Model.FeedList)
+            {
+                ParsedFeed parsedFeed = await feed.ParseFeedAsync();
+                // Free API call that fetches the logo of a company based on the links domain
+                string logoSource;
+                if (feed.Source.Contains("https://")) logoSource = $"https://logo.clearbit.com/{feed.Source.Split("https://")[1].Split("/")[0]}?format=png&size=300";
+                else logoSource = $"https://logo.clearbit.com/{feed.Source.Split("/")[0]}?format=png&size=300";
+
+                <div class="feed-grid-item">
+                    <!-- Feed Grid Item Header -->
+                    <div class="feed-grid-item-header">
+
+                        <div class="feed-grid-item-title">
+                            @{
+                                string title = "";
+                                if (parsedFeed.Title.Length > 37)
+                                {
+                                    title = parsedFeed.Title.Substring(0, 34) + "...";
+                                }
+                                else title = parsedFeed.Title;
+                            }
+                            <h3><a class="no-link" href="/FeedDetails?feedID=@feed.Id">@title</a></h3>
+                        </div>
+                        <img src=@logoSource class="d-block w-100 card-img" />
+                    </div>
+
+                    <h3 class="feed-grid-item-subtitle">Latest:</h3>
+                    <div class="feed-grid-item-body">
+                        @for (int i = 0; i < 3; i++)
+                        {
+                            var item = parsedFeed.Items[i];
+                            <p>
+                                <a class="no-link" href=@item.Link>@item.Title</a>
+                                @if (item.Published.HasValue)
+                                {
+                                    @Html.Raw("<br />- ")
+                                    @item.Published.Value.ToString("ddd d, MMMM yyyy")
+                                }
+                            </p>
+                            <hr />
+                        }
+                    </div>
+                </div>
+            }
+
+        </div>
+    }
+    else if (Model.FeedServiceException != string.Empty)
+    {
+        <p>Error: @Model.FeedServiceException</p>
+    }
+    else
+    {
+        <p>Something wemt wrong, try again later</p>
+    }
+    @if (User.Identity.IsAuthenticated == true)
+    {
+        @* Filtering Stuff Div *@
+        <div class="feed-grid-filters">
+
+            <h2 class="h2 mt-2 mb-0">Filters: </h2>
+            <form method="post" class="ms-auto">
+                <div class="filter-options">
+                    @foreach (var filter in Enum.GetValues(typeof(AlgoModule)))
+                    {
+                        <label>
+                            <input type="checkbox" name="checkedFilters" value="@filter" />
+                            @filter
+                        </label>
+                        <br>
+                    }
+                </div>
+                <button asp-page-handler="Algorithm" type="submit" class="btn btn-primary btn-lg d-block mx-auto" value="">Recommend Something</button>
+            </form>
+
+        </div>
+    }
+</div>
+
+
+@* Bottom navigation element *@
+<div>
+    <ul class="pagination">
+        @for (var i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                <a asp-page="/AllFeeds" asp-route-currentpage="@i" class="page-link">@i</a>
+            </li>
+        }
+    </ul>
+</div>

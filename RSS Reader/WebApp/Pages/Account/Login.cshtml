@@ -1,0 +1,31 @@
+﻿@page
+@model WebApp.Pages.RegisterModel
+@{
+    ViewData["Title"] = "Login";
+}
+<h2>Login</h2>
+
+
+<form class="form-horizontal p-2" method="post">
+
+    <label asp-for="LoginUser.Email">Email: </label>
+    <span asp-validation-for="LoginUser.Email" style="color:red"></span>
+    <br />
+    <input asp-for="LoginUser.Email" />
+    <br />
+
+    <label asp-for="LoginUser.Password">Password: </label>
+    <span asp-validation-for="LoginUser.Password" style="color:red"></span>
+    <br />
+    <input asp-for="LoginUser.Password" type="password"/>
+    <br />
+    <br />
+
+    <div class="button_container">
+        <input type="submit" value="Login" />
+    </div>
+</form>
+
+@section scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

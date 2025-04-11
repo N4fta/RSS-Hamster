@@ -1,0 +1,256 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.no-link:focus, .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+    /* Background Orange, text color gray (same as nav-links) */
+    background-color: rgb(255, 156, 0);
+    color: rgba(255,255,255,.75);
+}
+
+.no-link {
+    color: inherit;
+    text-decoration: inherit;
+    cursor: inherit;
+}
+.no-link:hover {
+    color: rgba(255,255,255,.95);
+}
+
+/* Navbar stuff */
+.navbar {
+    border: black;
+    border-bottom-style: solid;
+    border-bottom-width: 3px;
+}
+/* For nav button to blend in as nav link */
+.fake-link {
+    background: none;
+    border-width: 0;
+}
+
+.img-logo {
+    height: 90px;
+}
+
+.main-div {
+    width: 80%;
+    border-radius: 20px;
+}
+
+/* Caroussel Stuff */
+
+.carousel-inner {
+    padding: 1em;
+}
+
+.card {
+    margin: 0 .5em;
+    box-shadow: 2px 6px 8px 0 rgba(22, 22, 26, 0.18);
+    border: none;
+}
+
+.fakeimg{
+    width:300px;
+    background-color:#fff;
+}
+
+.card-img {
+    border-radius: 25px;
+    max-width: 100%;
+    height: 300px;
+    width: 300px;
+}
+
+.carousel-caption {
+    /* Position is absolute */
+    bottom: 0px;
+    padding-bottom: 0.20rem;
+    max-width: 285px;
+    right: initial;
+    left: initial;
+}
+
+.card-text {
+    display: table; /* keep the background color wrapped tight */
+    margin: 0px auto 0px auto; /* keep the table centered */
+    border-radius: 5px;
+    padding: 5px;
+    background: rgb(0, 0, 0); /* Fallback for older browsers without RGBA-support */
+    background: rgba(0, 0, 0, 0.75);
+}
+
+.carousel-control-prev, .carousel-control-next {
+    background-color: #e1e1e1;
+    width: 6vh;
+    height: 6vh;
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+@media (max-width: 934px) {
+    .carousel-inner {
+        display: flex;
+    }
+
+    .carousel-item {
+        margin-right: 0;
+        flex: 0 0 100%;
+        display: block;
+    }
+}
+
+@media (min-width: 934px) {
+    .carousel-inner {
+        display: flex;
+    }
+
+    .carousel-item {
+        margin-right: 0;
+        flex: 0 0 50%;
+        display: block;
+    }
+}
+
+@media (min-width: 1200px) {
+    .carousel-inner {
+        display: flex;
+    }
+
+    .carousel-item {
+        margin-right: 0;
+        flex: 0 0 33.333333%;
+        display: block;
+    }
+}
+
+@media (min-width: 1600px) {
+    .carousel-inner {
+        display: flex;
+    }
+
+    .carousel-item {
+        margin-right: 0;
+        flex: 0 0 25%;
+        display: block;
+    }
+}
+
+/* All Feeds Grid stuff */
+.feed-grid-filters {
+    min-width: 300px;
+    margin: 20px;
+    padding: 10px;
+    background-color: #46494d;
+    border-radius: 25px;
+    height: fit-content;
+    margin-inline: auto;
+}
+.filter-options {
+    padding: 15px;
+    background-color: #46494d;
+    border-radius: 25px;
+    overflow-wrap: anywhere;
+}
+.feed-grid{
+    display: flex;
+    flex-wrap: wrap;
+    align-items:self-start;
+}
+.feed-grid-item {
+    padding: 10px;
+    align-content: center;
+    width: 300px;
+
+}
+.feed-grid-item-header {
+    display:block;
+    position:relative;
+    padding: 10px;
+    align-content:center;
+}
+.feed-grid-item-title {
+    position: absolute;
+    font-size: 24px;
+    color: rgba(255,255,255,.90);
+    /* Position is absolute */
+    bottom: 5%;
+    padding-inline:10px;
+    max-width: 87%;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: table; /* keep the background color wrapped tight */
+    margin: 0px auto 0px auto; /* keep the table centered */
+    border-radius: 20px;
+    background: rgb(0, 0, 0); /* Fallback for older browsers without RGBA-support */
+    background: rgba(0, 0, 0, 0.75);
+}
+.feed-grid-item-body {
+    padding: 20px;
+    background-color: #46494d;
+    border-radius: 25px;
+    overflow-wrap:anywhere;
+}
+.feed-grid-item-subtitle {
+    font-size: 20px;
+    color: rgba(255,255,255,.75);
+}
+
+/* Feed Details stuff */
+.feed-details-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+}
+
+.feed-details-logo {
+    display: flex;
+    width: 300px;
+    margin: 10px;
+}
+@media (min-width: 934px) {
+    .feed-details-header {
+        padding: 15px;
+        display: flex;
+        flex-direction: row;
+        position: relative;
+        height: 300px;
+    }
+
+    .feed-details-logo {
+        margin-left: auto;
+        min-width: 300px;
+        max-height:100%;
+        align-self: flex-end;
+    }
+}
+.feed-details-item{
+    padding: 20px;
+    background-color: #46494d;
+    border-radius: 25px;
+    overflow-wrap: anywhere;
+    
+}
+.feed-details-item img, embed, picture {
+    width: 100%;
+}
